@@ -17,6 +17,13 @@ namespace KiwaïNLWine
 {
     public class Main : Plugin
     {
+        public static int GetIconId(int itemId)
+        {
+            var item = LifeManager.instance.item.GetItem(itemId);
+            int num = Array.IndexOf<Sprite>(LifeManager.instance.icons, item.models.FirstOrDefault().icon);
+            return num >= 0 ? num : GetIconId(1112);
+        }
+
         public Main(IGameAPI api) : base(api)
         {
         }
@@ -57,21 +64,21 @@ namespace KiwaïNLWine
                 menu(player);
             }
         }
-
+        
         public void menu(Player player)
         {
             if (player.GetActivity() != Life.BizSystem.Activity.Type.Chef)
             {
-                player.Notify("Menu", "Vous ne pouvez pas accédée a ce marché", NotificationManager.Type.Error);
+                player.Notify("Marché", "Vous ne pouvez pas accédée a ce marché.", NotificationManager.Type.Error);
                 return;
             }
             UIPanel vigneron = new UIPanel("Marché des vignerons", UIPanel.PanelType.TabPrice);
-            vigneron.AddTabLine("Vente de vin", ui =>
+            vigneron.AddTabLine("Vente de vin", "", GetIconId(1165), ui =>
             {
                 vente(player);
             });
 
-            vigneron.AddTabLine("Achat de matériels", ui =>
+            vigneron.AddTabLine("Achat de matériels", "", GetIconId(1231), ui =>
             {
                 achat(player);
             });
@@ -79,7 +86,7 @@ namespace KiwaïNLWine
             vigneron.AddButton("Fermer", ui =>
             {
                 player.ClosePanel(vigneron);
-                player.Notify("Menu", "Vous avez fermé le marché des vignerons", NotificationManager.Type.Success, 5);
+                player.Notify("Marché", "Vous avez fermé le marché des vignerons.", NotificationManager.Type.Success, 5);
             });
 
             vigneron.AddButton("Choisir", ui =>
@@ -100,7 +107,7 @@ namespace KiwaïNLWine
         public void Sell(Player player, int price)
         {
             var panel = new UIPanel("Vente de vin", UIPanel.PanelType.Input);
-            panel.SetText("Quel quantité de bouteille de vin souhaitez-vous vendre ?");
+            panel.SetText($"Quel quantité de bouteille de vin souhaitez-vous vendre ? (Prix unitaire: {price}€)");
             panel.SetInputPlaceholder("Quantité : ");
             panel.AddButton("Vendre", ui =>
             {
@@ -108,29 +115,29 @@ namespace KiwaïNLWine
                 {
                     if (quantity <= 0)
                     {
-                        player.Notify("Vente", "Vous ne pouvez pas vendre une quantité négative ou nulle", NotificationManager.Type.Error);
+                        player.Notify("Acheteur", "Vous ne pouvez pas vendre une quantité négative ou nulle.", NotificationManager.Type.Error);
                         return;
                     }
                     if (player.setup.inventory.items[player.setup.inventory.GetItemSlotById(88)].number < quantity)
                     {
-                        player.Notify("Vente", "Vous n'avez pas assez de bouteille de vin", NotificationManager.Type.Error);
+                        player.Notify("Acheteur", "Vous n'avez pas assez de bouteille de vin.", NotificationManager.Type.Error);
                         return;
                     }
                     player.setup.inventory.RemoveItem(88, quantity, false);
                     player.AddMoney(quantity * price, "Vente de vin");
-                    player.Notify("Vente", "Vous avez vendu " + quantity + " bouteille de vin pour " + quantity * price + "€", NotificationManager.Type.Success);
+                    player.Notify("Acheteur", "Vous avez vendu " + quantity + " bouteille de vin pour " + quantity * price + "€.", NotificationManager.Type.Success);
                     player.ClosePanel(panel);
                 }
                 else
                 {
-                    player.Notify("Vente", "Vous devez rentrer un nombre valide", NotificationManager.Type.Error);
+                    player.Notify("Acheteur", "Vous devez rentrer un nombre valide.", NotificationManager.Type.Error);
                 }
             });
 
             panel.AddButton("Fermer", ui =>
             {
                 player.ClosePanel(panel);
-                player.Notify("Vente", "Vous avez fermé le marché des vignerons", NotificationManager.Type.Success, 5);
+                player.Notify("Marché", "Vous avez fermé le marché des vignerons.", NotificationManager.Type.Success, 5);
             });
 
             panel.AddButton("Retour", ui =>
@@ -144,7 +151,7 @@ namespace KiwaïNLWine
         public void vente(Player player)
         {
             UIPanel vente = new UIPanel("Vente de vin", UIPanel.PanelType.TabPrice);
-            vente.AddTabLine("Station EXO (Amboise Nord)", AmboiseNordPrice.ToString() + "€", -1, ui =>
+            vente.AddTabLine("Station EXO (Amboise Nord)", AmboiseNordPrice.ToString() + "€", GetIconId(1165), ui =>
             {
                 var pointPosition = new Vector3(365.1333f, 50.00305f, 779.7359f);
                 player.setup.TargetSetGPSTarget(pointPosition);
@@ -156,11 +163,11 @@ namespace KiwaïNLWine
                 player.CreateVehicleCheckpoint(point);
             });
 
-            vente.AddTabLine("Station EXO (Reigneire)", ReignerePrice.ToString() + "€", 0, ui =>
+            vente.AddTabLine("Station EXO (Reigneire)", ReignerePrice.ToString() + "€", GetIconId(1165), ui =>
             {
                 var pointPosition = new Vector3(256.9022f, 44.98566f, -1263.793f);
                 player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(365.1333f, 50.00305f, 779.7359f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(256.9022f, 44.98566f, -1263.793f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
                 {
                     Sell(player, ReignerePrice);
                     player.DestroyVehicleCheckpoint(checkpoint);
@@ -168,11 +175,11 @@ namespace KiwaïNLWine
                 player.CreateVehicleCheckpoint(point);
             });
 
-            vente.AddTabLine("Station EXO (La Fuye)", FuyePrice.ToString() + "€", 0, ui =>
+            vente.AddTabLine("Station EXO (La Fuye)", FuyePrice.ToString() + "€", GetIconId(1165), ui =>
             {
                 var pointPosition = new Vector3(-360.02414f, 21.94958f, -473.1332f);
                 player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(365.1333f, 50.00305f, 779.7359f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(-360.02414f, 21.94958f, -473.1332f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
                 {
                     Sell(player, FuyePrice);
                     player.DestroyVehicleCheckpoint(checkpoint);
@@ -180,11 +187,11 @@ namespace KiwaïNLWine
                 player.CreateVehicleCheckpoint(point);
             });
 
-            vente.AddTabLine("AgroAlim", AgroalimPrice.ToString() + "€", 0, ui =>
+            vente.AddTabLine("AgroAlim", AgroalimPrice.ToString() + "€", GetIconId(1165), ui =>
             {
                 var pointPosition = new Vector3(1027.129f, 52.39577f, -720.9929f);
                 player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(365.1333f, 50.00305f, 779.7359f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(1027.129f, 52.39577f, -720.9929f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
                 {
                     Sell(player, AgroalimPrice);
                     player.DestroyVehicleCheckpoint(checkpoint);
@@ -192,11 +199,11 @@ namespace KiwaïNLWine
                 player.CreateVehicleCheckpoint(point);
             });
 
-            vente.AddTabLine("Boite de nuit", NightClubPrice.ToString() + "€", 0, ui =>
+            vente.AddTabLine("Boite de nuit", NightClubPrice.ToString() + "€", GetIconId(1165), ui =>
             {
                 var pointPosition = new Vector3(75.1063f, 44.22878f, 566.5424f);
                 player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(365.1333f, 50.00305f, 779.7359f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(75.1063f, 44.22878f, 566.5424f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
                 {
                     Sell(player, NightClubPrice);
                     player.DestroyVehicleCheckpoint(checkpoint);
@@ -204,11 +211,11 @@ namespace KiwaïNLWine
                 player.CreateVehicleCheckpoint(point);
             });
 
-            vente.AddTabLine("UFO Grill", UFOGrillPrice.ToString() + "€", 0, ui =>
+            vente.AddTabLine("UFO Grill", UFOGrillPrice.ToString() + "€", GetIconId(1165), ui =>
             {
                 var pointPosition = new Vector3(115.7158f, 42.00696f, -679.7314f);
                 player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(365.1333f, 50.00305f, 779.7359f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(115.7158f, 42.00696f, -679.7314f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
                 {
                     Sell(player, UFOGrillPrice);
                     player.DestroyVehicleCheckpoint(checkpoint);
@@ -219,7 +226,7 @@ namespace KiwaïNLWine
             vente.AddButton("Fermer", ui =>
             {
                 player.ClosePanel(vente);
-                player.Notify("Menu", "Vous avez fermé le marché des vignerons", NotificationManager.Type.Success, 5);
+                player.Notify("Marché", "Vous avez fermé le marché des vignerons.", NotificationManager.Type.Success, 5);
             });
             
             vente.AddButton("Retour", ui =>
@@ -230,6 +237,8 @@ namespace KiwaïNLWine
             vente.AddButton("Prendre", ui =>
             {
                 ui.SelectTab();
+                player.ClosePanel(vente);
+                player.Notify("Acheteur", "L'acheteur vous attend au point indiqué sur votre GPS.", NotificationManager.Type.Success, 5);
             });
 
             player.ShowPanelUI(vente);
@@ -238,7 +247,8 @@ namespace KiwaïNLWine
         public void Buy(Player player, int price, int itemID)
         {
             var panel = new UIPanel("Achat de matériels", UIPanel.PanelType.Input);
-            panel.SetText("Quel quantité de matériels souhaitez-vous acheter ?");
+            var itemName = Nova.man.item.GetItem(itemID).itemName;
+            panel.SetText($"Quel quantité de {itemName} souhaitez-vous acheter ? (Prix unitaire: {price}€)");
             panel.SetInputPlaceholder("Quantité : ");
             panel.AddButton("Acheter", ui =>
             {
@@ -246,22 +256,22 @@ namespace KiwaïNLWine
                 {
                     if (quantity <= 0)
                     {
-                        player.Notify("Achat", "Vous ne pouvez pas acheter une quantité négative ou nulle", NotificationManager.Type.Error);
+                        player.Notify("Vendeur", "Vous ne pouvez pas acheter une quantité négative ou nulle.", NotificationManager.Type.Error);
                         return;
                     }
                     if (player.character.Money < quantity * price)
                     {
-                        player.Notify("Achat", "Vous n'avez pas assez d'argent", NotificationManager.Type.Error);
+                        player.Notify("Vendeur", "Vous n'avez pas assez d'argent.", NotificationManager.Type.Error);
                         return;
                     }
                     if (player.setup.inventory.CanAddItem(itemID, quantity, "") == false)
                     {
-                        player.Notify("Achat", "Vous n'avez pas assez de place dans votre inventaire", NotificationManager.Type.Error);
+                        player.Notify("Vendeur", "Vous n'avez pas assez de place dans votre inventaire.", NotificationManager.Type.Error);
                         return;
                     }
                     player.AddMoney(-quantity * price, "Achat de matériel");
                     player.setup.inventory.AddItem(itemID, quantity, "");
-                    player.Notify("achat", "Vous avez acheté " + quantity + " " + Nova.man.item.GetItem(itemID).itemName + " pour " + quantity * price + "€", NotificationManager.Type.Success);
+                    player.Notify("Vendeur", "Vous avez acheté " + quantity + " " + itemName + " pour " + quantity * price + "€.", NotificationManager.Type.Success);
                     player.ClosePanel(panel);
                 }
             });
@@ -269,7 +279,7 @@ namespace KiwaïNLWine
             panel.AddButton("Fermer", ui =>
             {
                 player.ClosePanel(panel);
-                player.Notify("Achat", "Vous avez fermé le marché des vignerons", NotificationManager.Type.Success, 5);
+                player.Notify("Marché", "Vous avez fermé le marché des vignerons.", NotificationManager.Type.Success, 5);
             });
 
             panel.AddButton("Retour", ui =>
@@ -289,7 +299,7 @@ namespace KiwaïNLWine
         public void achat(Player player)
         {
             UIPanel achat = new UIPanel("Achat de matériels", UIPanel.PanelType.TabPrice);
-            achat.AddTabLine("Machine de production de vin", ui =>
+            achat.AddTabLine("Machine de production de vin", "", GetIconId(1092), ui =>
             {
                 var pointPosition = new Vector3(-76.3934f, 34.42593f, -546.1004f);
                 player.setup.TargetSetGPSTarget(pointPosition);
@@ -301,7 +311,7 @@ namespace KiwaïNLWine
                 player.CreateVehicleCheckpoint(point);
             });
 
-            achat.AddTabLine("Bouteille de vin vide", ui =>
+            achat.AddTabLine("Bouteille de vin vide", "", GetIconId(88), ui =>
             {
                 var pointPosition = new Vector3(1026.894f, 52.39577f, -721.7126f);
                 player.setup.TargetSetGPSTarget(pointPosition);
@@ -313,7 +323,7 @@ namespace KiwaïNLWine
                 player.CreateVehicleCheckpoint(point);
             });
 
-            achat.AddTabLine("Grappe de raisin", ui =>
+            achat.AddTabLine("Grappe de raisin", "", GetIconId(1093), ui =>
             {
                 var pointPosition = new Vector3(1026.894f, 52.39577f, -721.7126f);
                 player.setup.TargetSetGPSTarget(pointPosition);
@@ -325,7 +335,7 @@ namespace KiwaïNLWine
                 player.CreateVehicleCheckpoint(point);
             });
 
-            achat.AddTabLine("Carton", ui =>
+            achat.AddTabLine("Carton", "", GetIconId(1231), ui =>
             {
                 var pointPosition = new Vector3(439.3797f, 50.00305f, 929.9147f);
                 player.setup.TargetSetGPSTarget(pointPosition);
@@ -337,7 +347,7 @@ namespace KiwaïNLWine
                 player.CreateVehicleCheckpoint(point);
             });
 
-            achat.AddTabLine("Palette", ui =>
+            achat.AddTabLine("Palette", "", GetIconId(1001), ui =>
             {
                 var pointPosition = new Vector3(439.3797f, 50.00305f, 929.9147f);
                 player.setup.TargetSetGPSTarget(pointPosition);
@@ -352,7 +362,7 @@ namespace KiwaïNLWine
             achat.AddButton("Fermer", ui =>
             {
                 player.ClosePanel(achat);
-                player.Notify("Menu", "Vous avez fermé le marché des vignerons", NotificationManager.Type.Success, 5);
+                player.Notify("Marché", "Vous avez fermé le marché des vignerons.", NotificationManager.Type.Success, 5);
             });
 
             achat.AddButton("Retour", ui =>
@@ -363,6 +373,8 @@ namespace KiwaïNLWine
             achat.AddButton("Prendre", ui =>
             {
                 ui.SelectTab();
+                player.ClosePanel(achat);
+                player.Notify("Vendeur", "Le vendeur vous attend au point indiqué sur votre GPS.", NotificationManager.Type.Success, 5);
             });
 
             player.ShowPanelUI(achat);
