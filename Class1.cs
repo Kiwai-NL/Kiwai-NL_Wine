@@ -36,24 +36,28 @@ namespace KiwaïNLWine
             var Machine = Nova.man.item.GetItem(1092);
             var Bouteille = Nova.man.item.GetItem(1571);
             var Grappe = Nova.man.item.GetItem(1093);
+            Grappe.maxSlotCount = 100;
+            Wine.maxSlotCount = 100;
             Wine.resellable = false;
             Machine.buyable = false;
             Bouteille.buyable = false;
             Grappe.buyable = false;
-            while (true) 
+            while (true)
             {
                 var random = new System.Random();
-                AmboiseNordPrice = random.Next(15, 21);
-                ReignerePrice = random.Next(5, 11);
-                FuyePrice = random.Next(8, 15);
-                AgroalimPrice = random.Next(5, 7);
-                NightClubPrice = random.Next(12, 17);
-                UFOGrillPrice = random.Next(8, 15);
-                MachinePrice = random.Next(30000, 41000);
-                BottlePrice = random.Next(1, 5);
-                GraapPrice = random.Next(2, 6);
-                BoxPrice = random.Next(3, 7);
-                PalettePrice = random.Next(25, 36);
+                AmboiseNordPrice = random.Next((Nova.mapId == 0 ? 15 : 10), (Nova.mapId == 0 ? 21 : 17));
+                ReignerePrice = random.Next((Nova.mapId == 0 ? 5 : 2), (Nova.mapId == 0 ? 11 : 2));
+                FuyePrice = random.Next((Nova.mapId == 0 ? 8 : 15), (Nova.mapId == 0 ? 15 : 21));
+                AgroalimPrice = random.Next((Nova.mapId == 0 ? 5 : 12), (Nova.mapId == 0 ? 7 : 19));
+                NightClubPrice = random.Next((Nova.mapId == 0 ? 12 : 2), (Nova.mapId == 0 ? 17 : 2));
+                UFOGrillPrice = random.Next((Nova.mapId == 0 ? 8 : 8), (Nova.mapId == 0 ? 15 : 16));
+                MachinePrice = random.Next((Nova.mapId == 0 ? 30000 : 30000), (Nova.mapId == 0 ? 410000 : 41000));
+                BottlePrice = random.Next((Nova.mapId == 0 ? 1 : 1), (Nova.mapId == 0 ? 5 : 5));
+                GraapPrice = random.Next((Nova.mapId == 0 ? 2 : 2), (Nova.mapId == 0 ? 1 : 6));
+                BoxPrice = random.Next((Nova.mapId == 0 ? 3 : 3), (Nova.mapId == 0 ? 7 : 7));
+                PalettePrice = random.Next((Nova.mapId == 0 ? 25 : 25), (Nova.mapId == 0 ? 36 : 36));
+                //Premier chiffre = Amboise
+                //Second Chiffre = St-Branch
                 await Task.Delay(TimeSpan.FromHours(1));
                 Console.WriteLine("KiwaïNL Price updated");
             }
@@ -77,7 +81,7 @@ namespace KiwaïNLWine
                 menu(player);
             }
         }
-        
+
         public void menu(Player player)
         {
             if (player.GetActivity() != Life.BizSystem.Activity.Type.Chef)
@@ -165,47 +169,91 @@ namespace KiwaïNLWine
         public void vente(Player player)
         {
             UIPanel vente = new UIPanel("Vente de vin", UIPanel.PanelType.TabPrice);
-            vente.AddTabLine("Station EXO (Amboise Nord)", AmboiseNordPrice.ToString() + "€", GetIconId(1165), ui =>
+            string name = "";
+            if (Nova.mapId == 0)
             {
-                var pointPosition = new Vector3(365.1333f, 50.00305f, 779.7359f);
-                player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(365.1333f, 50.00305f, 779.7359f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                name = "Station EXO(Amboise Nord)";
+            }
+            else
+            {
+                name = "Station Essence";
+            }
+            vente.AddTabLine(name, AmboiseNordPrice.ToString() + "€", GetIconId(1165), ui =>
+            {
+                Vector3 position = default;
+                if (Nova.mapId == 0)
+                {
+                    position = new Vector3(365.1333f, 50.00305f, 779.7359f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                else if (Nova.mapId == 1)
+                {
+                    position = new Vector3(752.4894f, 50.00305f, 595.627f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, position, (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
                 {
                     Sell(player, AmboiseNordPrice);
                     player.DestroyVehicleCheckpoint(checkpoint);
                 }));
                 player.CreateVehicleCheckpoint(point);
             });
-
-            vente.AddTabLine("Station EXO (Reigneire)", ReignerePrice.ToString() + "€", GetIconId(1165), ui =>
+            if (Nova.mapId == 0)
             {
-                var pointPosition = new Vector3(256.9022f, 44.98566f, -1263.793f);
-                player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(256.9022f, 44.98566f, -1263.793f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                vente.AddTabLine("Station EXO (Reigneire)", ReignerePrice.ToString() + "€", GetIconId(1165), ui =>
                 {
-                    Sell(player, ReignerePrice);
-                    player.DestroyVehicleCheckpoint(checkpoint);
-                }));
-                player.CreateVehicleCheckpoint(point);
-            });
+                    var pointPosition = new Vector3(256.9022f, 44.98566f, -1263.793f);
+                    player.setup.TargetSetGPSTarget(pointPosition);
+                    NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(256.9022f, 44.98566f, -1263.793f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                    {
+                        Sell(player, ReignerePrice);
+                        player.DestroyVehicleCheckpoint(checkpoint);
+                    }));
+                    player.CreateVehicleCheckpoint(point);
+                });
 
-            vente.AddTabLine("Station EXO (La Fuye)", FuyePrice.ToString() + "€", GetIconId(1165), ui =>
-            {
-                var pointPosition = new Vector3(-360.02414f, 21.94958f, -473.1332f);
-                player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(-360.02414f, 21.94958f, -473.1332f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                vente.AddTabLine("Station EXO (La Fuye)", FuyePrice.ToString() + "€", GetIconId(1165), ui =>
                 {
-                    Sell(player, FuyePrice);
-                    player.DestroyVehicleCheckpoint(checkpoint);
-                }));
-                player.CreateVehicleCheckpoint(point);
-            });
+                    var pointPosition = new Vector3(-360.02414f, 21.94958f, -473.1332f);
+                    player.setup.TargetSetGPSTarget(pointPosition);
+                    NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(-360.02414f, 21.94958f, -473.1332f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                    {
+                        Sell(player, FuyePrice);
+                        player.DestroyVehicleCheckpoint(checkpoint);
+                    }));
+                    player.CreateVehicleCheckpoint(point);
+                });
+            }
+            else if (Nova.mapId == 1)
+            {
+                vente.AddTabLine("Commercial", FuyePrice.ToString() + "€", GetIconId(1165), ui =>
+                {
+                    var pointPosition = new Vector3(289.7006f, 44.99786f, 601.098f);
+                    player.setup.TargetSetGPSTarget(pointPosition);
+                    NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(289.7006f, 44.99786f, 601.098f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                    {
+                        Sell(player, FuyePrice);
+                        player.DestroyVehicleCheckpoint(checkpoint);
+                    }));
+                    player.CreateVehicleCheckpoint(point);
+                });
+            }
+           
 
             vente.AddTabLine("AgroAlim", AgroalimPrice.ToString() + "€", GetIconId(1165), ui =>
             {
-                var pointPosition = new Vector3(1027.129f, 52.39577f, -720.9929f);
-                player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(1027.129f, 52.39577f, -720.9929f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                Vector3 position = default;
+                if (Nova.mapId == 0)
+                {
+                    position = new Vector3(1027.129f, 52.39577f, -720.9929f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                else if (Nova.mapId == 1)
+                {
+                    position = new Vector3(735.5896f, 50.00305f, 770.8501f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, position, (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
                 {
                     Sell(player, AgroalimPrice);
                     player.DestroyVehicleCheckpoint(checkpoint);
@@ -213,36 +261,53 @@ namespace KiwaïNLWine
                 player.CreateVehicleCheckpoint(point);
             });
 
-            vente.AddTabLine("Boite de nuit", NightClubPrice.ToString() + "€", GetIconId(1165), ui =>
+            if (Nova.mapId == 0)
             {
-                var pointPosition = new Vector3(75.1063f, 44.22878f, 566.5424f);
-                player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(75.1063f, 44.22878f, 566.5424f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                vente.AddTabLine("Boite de nuit", NightClubPrice.ToString() + "€", GetIconId(1165), ui =>
                 {
-                    Sell(player, NightClubPrice);
-                    player.DestroyVehicleCheckpoint(checkpoint);
-                }));
-                player.CreateVehicleCheckpoint(point);
-            });
+                    var pointPosition = new Vector3(75.1063f, 44.22878f, 566.5424f);
+                    player.setup.TargetSetGPSTarget(pointPosition);
+                    NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(75.1063f, 44.22878f, 566.5424f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                    {
+                        Sell(player, NightClubPrice);
+                        player.DestroyVehicleCheckpoint(checkpoint);
+                    }));
+                    player.CreateVehicleCheckpoint(point);
+                });
 
-            vente.AddTabLine("UFO Grill", UFOGrillPrice.ToString() + "€", GetIconId(1165), ui =>
-            {
-                var pointPosition = new Vector3(115.7158f, 42.00696f, -679.7314f);
-                player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(115.7158f, 42.00696f, -679.7314f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                vente.AddTabLine("UFO Grill", UFOGrillPrice.ToString() + "€", GetIconId(1165), ui =>
                 {
-                    Sell(player, UFOGrillPrice);
-                    player.DestroyVehicleCheckpoint(checkpoint);
-                }));
-                player.CreateVehicleCheckpoint(point);
-            });
+                    var pointPosition = new Vector3(115.7158f, 42.00696f, -679.7314f);
+                    player.setup.TargetSetGPSTarget(pointPosition);
+                    NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(115.7158f, 42.00696f, -679.7314f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                    {
+                        Sell(player, UFOGrillPrice);
+                        player.DestroyVehicleCheckpoint(checkpoint);
+                    }));
+                    player.CreateVehicleCheckpoint(point);
+                });
+            }
+            else if (Nova.mapId == 1)
+            {
+                vente.AddTabLine("Maison d'arrêt", UFOGrillPrice.ToString() + "€", GetIconId(1165), ui =>
+                {
+                    var pointPosition = new Vector3(895.1609f, 46.10591f, 267.806f);
+                    player.setup.TargetSetGPSTarget(pointPosition);
+                    NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(895.1609f, 46.10591f, 267.806f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                    {
+                        Sell(player, UFOGrillPrice);
+                        player.DestroyVehicleCheckpoint(checkpoint);
+                    }));
+                    player.CreateVehicleCheckpoint(point);
+                });
+            }
 
             vente.AddButton("Fermer", ui =>
             {
                 player.ClosePanel(vente);
                 player.Notify("Marché", "Vous avez fermé le marché des vignerons.", NotificationManager.Type.Success, 5);
             });
-            
+
             vente.AddButton("Retour", ui =>
             {
                 menu(player);
@@ -316,9 +381,18 @@ namespace KiwaïNLWine
             UIPanel achat = new UIPanel("Achat de matériels", UIPanel.PanelType.TabPrice);
             achat.AddTabLine("Machine de production de vin", "", GetIconId(1092), ui =>
             {
-                var pointPosition = new Vector3(-76.3934f, 34.42593f, -546.1004f);
-                player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(-76.3934f, 34.42593f, -546.1004f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                Vector3 position = default;
+                if (Nova.mapId == 0)
+                {
+                    position = new Vector3(-76.3934f, 34.42593f, -546.1004f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                else if (Nova.mapId == 1)
+                {
+                    position = new Vector3(735.5896f, 50.00305f, 770.8501f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, position, (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
                 {
                     Buy(player, MachinePrice, 1092);
                     player.DestroyVehicleCheckpoint(checkpoint);
@@ -328,9 +402,18 @@ namespace KiwaïNLWine
 
             achat.AddTabLine("Bouteille de vin vide", "", GetIconId(88), ui =>
             {
-                var pointPosition = new Vector3(1026.894f, 52.39577f, -721.7126f);
-                player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(1026.894f, 52.39577f, -721.7126f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                Vector3 position = default;
+                if (Nova.mapId == 0)
+                {
+                    position = new Vector3(1026.894f, 52.39577f, -721.7126f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                else if (Nova.mapId == 1)
+                {
+                    position = new Vector3(735.5896f, 50.00305f, 770.8501f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, position, (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
                 {
                     Buy(player, BottlePrice, 1571);
                     player.DestroyVehicleCheckpoint(checkpoint);
@@ -340,9 +423,18 @@ namespace KiwaïNLWine
 
             achat.AddTabLine("Grappe de raisin", "", GetIconId(1093), ui =>
             {
-                var pointPosition = new Vector3(1026.894f, 52.39577f, -721.7126f);
-                player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(1026.894f, 52.39577f, -721.7126f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                Vector3 position = default;
+                if (Nova.mapId == 0)
+                {
+                    position = new Vector3(1026.894f, 52.39577f, -721.7126f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                else if (Nova.mapId == 1)
+                {
+                    position = new Vector3(735.5896f, 50.00305f, 770.8501f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, position, (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
                 {
                     Buy(player, GraapPrice, 1093);
                     player.DestroyVehicleCheckpoint(checkpoint);
@@ -352,9 +444,18 @@ namespace KiwaïNLWine
 
             achat.AddTabLine("Carton", "", GetIconId(1231), ui =>
             {
-                var pointPosition = new Vector3(439.3797f, 50.00305f, 929.9147f);
-                player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(439.3797f, 50.00305f, 929.9147f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                Vector3 position = default;
+                if (Nova.mapId == 0)
+                {
+                    position = new Vector3(439.3797f, 50.00305f, 929.9147f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                else if (Nova.mapId == 1)
+                {
+                    position = new Vector3(42.52002f, 42.81267f, 820.3495f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, position, (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
                 {
                     Buy(player, BoxPrice, 1231);
                     player.DestroyVehicleCheckpoint(checkpoint);
@@ -364,9 +465,18 @@ namespace KiwaïNLWine
 
             achat.AddTabLine("Palette", "", GetIconId(1001), ui =>
             {
-                var pointPosition = new Vector3(439.3797f, 50.00305f, 929.9147f);
-                player.setup.TargetSetGPSTarget(pointPosition);
-                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, new Vector3(439.3797f, 50.00305f, 929.9147f), (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
+                Vector3 position = default;
+                if (Nova.mapId == 0)
+                {
+                    position = new Vector3(439.3797f, 50.00305f, 929.9147f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                else if (Nova.mapId == 1)
+                {
+                    position = new Vector3(42.52002f, 42.81267f, 820.3495f);
+                    player.setup.TargetSetGPSTarget(position);
+                }
+                NVehicleCheckpoint point = new NVehicleCheckpoint(player.netId, position, (Action<NVehicleCheckpoint, uint>)((checkpoint, someUint) =>
                 {
                     Buy(player, PalettePrice, 1001);
                     player.DestroyVehicleCheckpoint(checkpoint);
