@@ -76,7 +76,7 @@ namespace KiwaïNLWine
         public override void OnPlayerInput(Player player, KeyCode keyCode, bool onUI)
         {
             base.OnPlayerInput(player, keyCode, onUI);
-            if (keyCode == KeyCode.Y && onUI == false)
+            if (keyCode == KeyCode.M && onUI == false)
             {
                 menu(player);
             }
