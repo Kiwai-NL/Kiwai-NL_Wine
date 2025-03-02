@@ -1,4 +1,6 @@
 # KiwaiNLWine
-!!! Ce plugin est basée sur la map Amboise actuellement (Une mise à jour pour rajoutée la map StBranch sera fait dans peu de temps) !!!
 
-KiwaïNLWine est un plugin pour le jeux Nova-Life pour améliorée le métier de Vignerons en ajoutant un système de marché pour celui-ci, comme ça il ne dépend pas que des joueurs pour se faire de l'argent mais également du marché, vous pouvez donc vendre votre production à 5 emplacement prédéfinis et achétée le matériel nécéssaire a la production de vos bouteilles également par le marché. Des mise à jours sont a prévoir, Merci de restée informée !
+KiwaïNLWine est un plugin améliorent le métier de vignerons grâce à un marché que vous ouvrez avec votre touche "y", celui-ci vous permez d'achetée les matière nécéssaire à la production de vin, ainsi que diverse endroit oû vous pouvez allez vendre votre vin (les prix des matière première, ainsi que le prix de vente du marché est changé toute les heures), le plugin à également fait en sorte que les bouteille de vin et les grappes aie une limite de quantité (vous ne pouvez en avoir que 100 par slot d'inventaire). Le but principale du plugin est de permettre au vignerons de ne pas dépendre uniquement des joueurs pour gangée de l'argent. Si vous rencontré des problème avec le plugin merci de me contactée via discord si vous l'avez ou alors par message Github.
+
+Credit :
+MediaGamings (KiwaïNL Team) - Développeur
