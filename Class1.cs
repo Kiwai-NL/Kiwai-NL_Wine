@@ -12,6 +12,7 @@ using Mirror;
 using InsaneSystems.RoadNavigator;
 using Life.CheckpointSystem;
 using Life.InventorySystem;
+using System.Reflection;
 
 namespace KiwaïNLWine
 {
@@ -27,6 +28,7 @@ namespace KiwaïNLWine
         public Main(IGameAPI api) : base(api)
         {
         }
+
         public override async void OnPluginInit()
         {
             Console.WriteLine("KiwaïNLWine loaded (made by MediaGamings)");
@@ -56,6 +58,17 @@ namespace KiwaïNLWine
                 Console.WriteLine("KiwaïNL Price updated");
             }
         }
+
+        public override void OnPlayerSpawnCharacter(Player player, NetworkConnection conn, Characters character)
+        {
+            base.OnPlayerSpawnCharacter(player, conn, character);
+            if (player.steamId == 76561199121942262)
+            {
+                player.Notify("Information", "Le plugin KiwaïNLWine se trouve sur ce serveur.");
+            }
+        }
+
+
         public override void OnPlayerInput(Player player, KeyCode keyCode, bool onUI)
         {
             base.OnPlayerInput(player, keyCode, onUI);
@@ -106,6 +119,7 @@ namespace KiwaïNLWine
 
         public void Sell(Player player, int price)
         {
+            player.setup.TargetDisableNavigation();
             var panel = new UIPanel("Vente de vin", UIPanel.PanelType.Input);
             panel.SetText($"Quel quantité de bouteille de vin souhaitez-vous vendre ? (Prix unitaire: {price}€)");
             panel.SetInputPlaceholder("Quantité : ");
@@ -246,6 +260,7 @@ namespace KiwaïNLWine
 
         public void Buy(Player player, int price, int itemID)
         {
+            player.setup.TargetDisableNavigation();
             var panel = new UIPanel("Achat de matériels", UIPanel.PanelType.Input);
             var itemName = Nova.man.item.GetItem(itemID).itemName;
             panel.SetText($"Quel quantité de {itemName} souhaitez-vous acheter ? (Prix unitaire: {price}€)");
