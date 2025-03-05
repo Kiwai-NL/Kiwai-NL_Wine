@@ -51,7 +51,7 @@ namespace KiwaïNLWine
                 AgroalimPrice = random.Next((Nova.mapId == 0 ? 5 : 12), (Nova.mapId == 0 ? 7 : 19));
                 NightClubPrice = random.Next((Nova.mapId == 0 ? 12 : 2), (Nova.mapId == 0 ? 17 : 2));
                 UFOGrillPrice = random.Next((Nova.mapId == 0 ? 8 : 8), (Nova.mapId == 0 ? 15 : 16));
-                MachinePrice = random.Next((Nova.mapId == 0 ? 30000 : 30000), (Nova.mapId == 0 ? 410000 : 41000));
+                MachinePrice = random.Next((Nova.mapId == 0 ? 30000 : 30000), (Nova.mapId == 0 ? 41000 : 41000));
                 BottlePrice = random.Next((Nova.mapId == 0 ? 1 : 1), (Nova.mapId == 0 ? 5 : 5));
                 GraapPrice = random.Next((Nova.mapId == 0 ? 2 : 2), (Nova.mapId == 0 ? 1 : 6));
                 BoxPrice = random.Next((Nova.mapId == 0 ? 3 : 3), (Nova.mapId == 0 ? 7 : 7));
