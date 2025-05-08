@@ -2,7 +2,7 @@
 
 # KiwaiNLWine
 
-KiwaïNLWine est un plugin améliorent le métier de vignerons grâce à un marché que vous ouvrez avec votre touche "M", celui-ci vous permez d'achetée les matière nécéssaire à la production de vin, ainsi que diverse endroit oû vous pouvez allez vendre votre vin (les prix des matière première, ainsi que le prix de vente du marché est changé toute les heures), le plugin à également fait en sorte que les bouteille de vin et les grappes aie une limite de quantité (vous ne pouvez en avoir que 100 par slot d'inventaire). Le but principale du plugin est de permettre au vignerons de ne pas dépendre uniquement des joueurs pour gangée de l'argent. Si vous rencontré des problème avec le plugin merci de me contactée via discord si vous l'avez ou alors par message Github.
+KiwaïNLWine est un plugin améliorant le métier de vignerons grâce à un marché que vous ouvrez avec votre touche "M", celui-ci vous permet d'acheter les matières nécessaires à la production de vin, ainsi que divers endroits où vous pouvez aller vendre votre vin (les prix des matières premières, ainsi que le prix de vente du marché sont changés toutes les heures), le plugin a également fait en sorte que les bouteilles de vin et les grappes ont une limite de quantité (vous ne pouvez en avoir que 100 par slot d'inventaire). Le but principal du plugin est de permettre aux vignerons de ne pas dépendre uniquement des joueurs pour gagner de l'argent. Si vous rencontrez des problèmes avec le plugin, merci de me contacter via Discord si vous l'avez, ou alors par message Github.
 
 Credit :
 - MediaGamings (Kiwaï-NL Team) - Développeur/Testeur
