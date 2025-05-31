@@ -6,4 +6,5 @@ KiwaïNLWine est un plugin améliorant le métier de vignerons grâce à un marc
 
 Credit :
 - MediaGamings (Kiwaï-NL Team) - Développeur/Testeur
+- Robocnop (Kiwaï-NL Team) - Contributeur
 - Shape581 (Kiwaï-NL Team) - Testeur
